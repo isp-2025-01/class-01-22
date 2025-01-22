@@ -2,6 +2,75 @@
 title: "Home Page"
 ---
 
-This is a Quarto website.
+```{r}
+library(tidycensus)
+library(tidyverse)
+library(leaflet)
+library(sf)
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+fl_education_data <- get_acs(
+  geography = "tract",  # Use "block group" for block group level
+  variables = "B15003_022",  # Example: Bachelor's degree or higher
+  state = "FL",  # Florida
+  year = 2021,  # Specify the year
+  survey = "acs5",  # 5-year ACS data
+  geometry = TRUE  # Set to TRUE if you want spatial data
+)
+```
+
+```{r}
+fl_education_data <- fl_education_data %>%
+  rename(
+    Tract = NAME,
+    Education_Variable = variable,
+    Estimate = estimate,
+    Margin_of_Error = moe
+  )
+
+# Add a new column for popup text (optional but useful for interactivity)
+fl_education_data <- fl_education_data %>%
+  mutate(
+    Popup_Text = paste(
+      "Tract: ", Tract, "<br>",
+      "Estimate: ", Estimate, "<br>",
+      "Margin of Error: ", Margin_of_Error
+    )
+  )
+```
+
+```{r}
+# Define a color palette based on the Estimate values
+pal <- colorNumeric(
+  palette = "viridis",  # You can use "viridis", "plasma", or other color schemes
+  domain = fl_education_data$Estimate
+)
+
+# Create the interactive map
+leaflet_map <- leaflet(fl_education_data) %>%
+  addTiles() %>%  # Add base map tiles
+  addPolygons(
+    color = ~pal(Estimate),  # Color polygons based on Estimate
+    weight = 1,              # Border thickness
+    opacity = 1,             # Border opacity
+    fillOpacity = 0.7,       # Fill opacity
+    popup = ~Popup_Text,     # Popup text when clicking on a tract
+    highlightOptions = highlightOptions(
+      weight = 2,            # Highlight border thickness
+      color = "white",       # Highlight border color
+      fillOpacity = 0.9,     # Highlight fill opacity
+      bringToFront = TRUE    # Bring highlighted tract to front
+    )
+  ) %>%
+  addLegend(
+    position = "bottomright",  # Position of the legend
+    pal = pal,                 # Color palette
+    values = ~Estimate,        # Values for the legend
+    title = "Estimate of Bachelor's Degree or Higher"  # Legend title
+  )
+
+# Display the map
+leaflet_map
+```
+
+
+
