@@ -1,5 +1,9 @@
 ---
 title: "Home Page"
+execute:
+  echo: false
+  message: false
+  warning: false
 ---
 
 ```{r}
@@ -8,14 +12,7 @@ library(tidyverse)
 library(leaflet)
 library(sf)
 
-fl_education_data <- get_acs(
-  geography = "tract",  # Use "block group" for block group level
-  variables = "B15003_022",  # Example: Bachelor's degree or higher
-  state = "FL",  # Florida
-  year = 2021,  # Specify the year
-  survey = "acs5",  # 5-year ACS data
-  geometry = TRUE  # Set to TRUE if you want spatial data
-)
+fl_education_data <- read_rds("data.rds")
 ```
 
 ```{r}
@@ -71,6 +68,8 @@ leaflet_map <- leaflet(fl_education_data) %>%
 # Display the map
 leaflet_map
 ```
+
+
 
 
 
