@@ -11,63 +11,62 @@ library(tidycensus)
 library(tidyverse)
 library(leaflet)
 library(sf)
+library(viridis)
 
-fl_education_data <- read_rds("data.rds")
+x <- read_rds("fl_data.rds")
 ```
 
-```{r}
-fl_education_data <- fl_education_data %>%
-  rename(
-    Tract = NAME,
-    Education_Variable = variable,
-    Estimate = estimate,
-    Margin_of_Error = moe
-  )
-
-# Add a new column for popup text (optional but useful for interactivity)
-fl_education_data <- fl_education_data %>%
-  mutate(
-    Popup_Text = paste(
-      "Tract: ", Tract, "<br>",
-      "Estimate: ", Estimate, "<br>",
-      "Margin of Error: ", Margin_of_Error
-    )
-  )
-```
 
 ```{r}
-# Define a color palette based on the Estimate values
+# Remove rows with empty geometries
+x <- x[!st_is_empty(x$geometry), ]
+
+# Transform to WGS84 (EPSG:4326) for mapping
+x <- st_transform(x, crs = 4326)
+
+# Calculate centroids for labeling (optional)
+centroids <- st_centroid(x$geometry)
+x$lon <- st_coordinates(centroids)[, 1]
+x$lat <- st_coordinates(centroids)[, 2]
+
+# Define a color palette
 pal <- colorNumeric(
-  palette = "viridis",  # You can use "viridis", "plasma", or other color schemes
-  domain = fl_education_data$Estimate
+  palette = "viridis",  # Use the "viridis" color scale
+  domain = x$pct_bachelors  # Map to the pct_bachelors column
 )
 
-# Create the interactive map
-leaflet_map <- leaflet(fl_education_data) %>%
+# Create the leaflet map
+leaflet_map <- leaflet(x) %>%
   addTiles() %>%  # Add base map tiles
   addPolygons(
-    color = ~pal(Estimate),  # Color polygons based on Estimate
-    weight = 1,              # Border thickness
-    opacity = 1,             # Border opacity
-    fillOpacity = 0.7,       # Fill opacity
-    popup = ~Popup_Text,     # Popup text when clicking on a tract
+    color = ~pal(pct_bachelors),  # Color polygons based on pct_bachelors
+    weight = 1,                   # Border thickness
+    opacity = 1,                  # Border opacity
+    fillOpacity = 0.7,            # Fill opacity
+    popup = ~paste(               # Popup text when clicking on a tract
+      "Tract: ", NAME, "<br>",
+      "Population: ", B01003_001, "<br>",
+      "% Bachelors: ", round(pct_bachelors, 2), "%"
+    ),
     highlightOptions = highlightOptions(
-      weight = 2,            # Highlight border thickness
-      color = "white",       # Highlight border color
-      fillOpacity = 0.9,     # Highlight fill opacity
-      bringToFront = TRUE    # Bring highlighted tract to front
+      weight = 2,                 # Highlight border thickness
+      color = "white",            # Highlight border color
+      fillOpacity = 0.9,          # Highlight fill opacity
+      bringToFront = TRUE         # Bring highlighted tract to front
     )
   ) %>%
   addLegend(
-    position = "bottomright",  # Position of the legend
-    pal = pal,                 # Color palette
-    values = ~Estimate,        # Values for the legend
-    title = "Estimate of Bachelor's Degree or Higher"  # Legend title
+    position = "bottomright",     # Position of the legend
+    pal = pal,                    # Color palette
+    values = ~pct_bachelors,      # Values for the legend
+    title = "% Bachelors"         # Legend title
   )
 
 # Display the map
 leaflet_map
 ```
+
+
 
 
 
