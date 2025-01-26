@@ -1,5 +1,6 @@
 library(tidycensus)
 library(tidyverse)
+library(sf)
 
 # Define the variables you want to extract
 education_variables <- c(
@@ -26,7 +27,7 @@ fl_education_wide <- fl_education_data %>%
   tidyr::pivot_wider(names_from = variable, values_from = estimate)
 
 # Calculate percentages for each education level
-fl_education_wide <- fl_education_wide %>%
+x <- fl_education_wide %>%
   mutate(
     pct_bachelors = (B15003_022 / B01003_001) * 100,
     pct_masters = (B15003_023 / B01003_001) * 100,
@@ -34,5 +35,16 @@ fl_education_wide <- fl_education_wide %>%
     pct_doctorate = (B15003_025 / B01003_001) * 100
   )
 
+# Remove rows with empty geometries
+x <- x[!st_is_empty(x$geometry), ]
 
-write_rds(fl_education_wide, file = "fl_data.rds")
+# Transform to WGS84 (EPSG:4326) for mapping
+x <- st_transform(x, crs = 4326)
+
+# Calculate centroids for labeling (optional)
+centroids <- st_centroid(x$geometry)
+x$lon <- st_coordinates(centroids)[, 1]
+x$lat <- st_coordinates(centroids)[, 2]
+
+
+write_rds(x, file = "fl_data.rds")
