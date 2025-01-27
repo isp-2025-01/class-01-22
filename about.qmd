@@ -2,4 +2,26 @@
 title: "About"
 ---
 
-About this site
+My name is David Kane, and I am an instructor at [New College of Florida](https://www.ncf.edu/). [This is the location](https://github.com/isp-2025-01/florida-education) of the GitHub repo for this project. The data for the project comes from the American Community Survey. The repo includes all the code for replicating the analysis on this website. 
+
+
+# The American Community Survey (ACS)
+
+The **American Community Survey (ACS)** is an ongoing survey conducted by the U.S. Census Bureau that provides vital demographic, social, economic, and housing data about communities across the United States. Unlike the decennial Census, which is conducted every 10 years, the ACS is an annual survey that offers more frequent and detailed insights into the lives of Americans.
+
+## Key Features:
+- **Annual Data Collection**: The ACS collects data every year, providing up-to-date information on population characteristics.
+- **Detailed Topics**: It covers a wide range of topics, including education, employment, income, housing, transportation, and more.
+- **Geographic Granularity**: Data is available at various geographic levels, from national and state levels down to census tracts and block groups.
+
+## Importance:
+- **Informed Decision-Making**: Governments, businesses, and nonprofits use ACS data to allocate resources, plan services, and make policy decisions.
+- **Community Insights**: The survey helps identify trends and disparities in areas like poverty, education, and housing affordability.
+- **Supplement to the Census**: The ACS complements the decennial Census by providing more frequent updates on population changes.
+
+## How It Works:
+- **Sampling Method**: The ACS uses a rotating sample of addresses, ensuring representation across the U.S. population.
+- **Voluntary Participation**: Selected households are required by law to respond, ensuring high-quality data.
+
+The ACS is a critical tool for understanding the evolving needs of American communities and shaping the nation's future.
+

@@ -1,5 +1,4 @@
 ---
-title: "Home Page"
 execute:
   echo: false
   message: false
@@ -58,7 +57,7 @@ leaflet_map
 ```
 
 
-
+This map shows a heat map of bachelor's degree attainment across the state of Florida. The map uses a color gradient from purple to yellow, where darker purple indicates lower percentages of bachelor's degree holders (0-10%) and lighter colors including greens and yellows represent higher percentages (up to 50%). There is significant variation across the state, with some clusters of higher educational attainment corresponding to major urban areas. The panhandle region and central Florida show generally darker purple coloring, suggesting lower rates of bachelor's degree attainment, while there are pockets of lighter colors, particularly along some coastal areas and what appear to be major metropolitan regions. 
 
 
 
